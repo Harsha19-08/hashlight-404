@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 · Footage not found · Hashlight</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0c;
+    --bezel:#131315;
+    --text:#f5f4f0;
+    --muted:#8d8d93;
+    --line:#26262a;
+    --teal:#2fd6c2;
+    --orange:#ff7a3d;
+    --rec:#ff3b57;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  html{overflow-x:hidden; width:100%;}
+
+  /* Themed scrollbar instead of the default browser bar */
+  html{scrollbar-width:thin; scrollbar-color:var(--line) var(--bg);}
+  ::-webkit-scrollbar{width:8px; height:8px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  ::-webkit-scrollbar-thumb:hover{background:#3a3a40;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    width:100%;
+    overflow-x:hidden;
+  }
+
+  a{color:inherit;}
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:26px clamp(20px,5vw,64px) 0;
+    max-width:1040px;
+    margin:0 auto;
+    width:100%;
+  }
+
+  .wordmark{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:-0.01em;
+    text-decoration:none;
+  }
+  .wordmark span{color:var(--orange);}
+
+  .topbar nav a{
+    font-size:13.5px;
+    color:var(--muted);
+    text-decoration:none;
+    margin-left:26px;
+    transition:color .15s ease;
+  }
+  .topbar nav a:hover,.topbar nav a:focus-visible{color:var(--text);}
+
+  main{
+    flex:1;
+    padding:40px clamp(20px,5vw,64px) 60px;
+  }
+
+  .stack{
+    max-width:1040px;
+    margin:0 auto;
+  }
+
+  /* Monitor */
+  .monitor{
+    position:relative;
+    background:var(--bezel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
+  }
+
+  .screen{
+    position:relative;
+    aspect-ratio:16/9;
+    background:#000;
+    overflow:hidden;
+    border-radius:3px;
+  }
+
+  .bracket{
+    position:absolute;
+    width:22px;height:22px;
+    border-color:var(--teal);
+    border-style:solid;
+    border-width:0;
+    z-index:3;
+    opacity:.85;
+  }
+  .bracket.tl{top:10px;left:10px;border-top-width:2px;border-left-width:2px;}
+  .bracket.tr{top:10px;right:10px;border-top-width:2px;border-right-width:2px;}
+  .bracket.bl{bottom:10px;left:10px;border-bottom-width:2px;border-left-width:2px;}
+  .bracket.br{bottom:10px;right:10px;border-bottom-width:2px;border-right-width:2px;}
+
+  .stripes{
+    position:absolute;inset:0;
+    background:repeating-linear-gradient(
+      135deg,
+      rgba(47,214,194,0.10) 0px, rgba(47,214,194,0.10) 14px,
+      rgba(255,122,61,0.09) 14px, rgba(255,122,61,0.09) 28px,
+      transparent 28px, transparent 42px
+    );
+  }
+
+  .scan{
+    position:absolute;inset:0;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 3px);
+    animation:drift 20s linear infinite;
+  }
+
+  .vignette{
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.8) 100%);
+  }
+
+  .hud-row{
+    position:absolute;
+    left:12px;right:12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:clamp(8px,2.4vw,11px);
+    color:#dcdcd9;
+    letter-spacing:0.03em;
+    z-index:2;
+    gap:8px;
+  }
+  .hud-row.top{top:clamp(8px,2vw,14px);}
+  .hud-row.bottom{bottom:clamp(8px,2vw,14px);}
+  .hud-row span{white-space:nowrap;}
+
+  .rec{display:flex;align-items:center;gap:6px;}
+  .rec .dot{width:7px;height:7px;border-radius:50%;background:var(--rec);animation:blink 1.4s infinite;}
+
+  .meters{display:flex;align-items:center;gap:clamp(5px,1.5vw,10px);}
+  .meter{display:flex;align-items:flex-end;gap:2px;height:14px;}
+  .meter i{width:3px;background:var(--teal);display:block;border-radius:1px;transition:height .28s ease;}
+  .meter-label{color:var(--muted);}
+
+  .safe{
+    position:absolute;
+    inset:15%;
+    border:1px dashed rgba(255,255,255,0.14);
+    z-index:1;
+  }
+
+  .center-copy{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    z-index:2;
+  }
+  .offline-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    color:var(--orange);
+    margin-bottom:14px;
+  }
+  .code{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(58px,13vw,118px);
+    line-height:0.95;
+    letter-spacing:-0.03em;
+    margin:0;
+  }
+  .no-footage{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    margin-top:12px;
+    letter-spacing:0.03em;
+  }
+
+  /* Copy below monitor */
+  .copy{
+    max-width:640px;
+    margin:44px auto 0;
+    text-align:center;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:clamp(28px,4vw,38px);
+    line-height:1.15;
+    letter-spacing:-0.01em;
+    margin:0 0 16px;
+  }
+  .lede{
+    font-size:16px;
+    line-height:1.65;
+    color:var(--muted);
+    margin:0 0 30px;
+  }
+
+  .ctas{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:14px;
+    margin-bottom:34px;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:14.5px;
+    font-weight:600;
+    text-decoration:none;
+    padding:13px 22px;
+    border-radius:7px;
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .btn-primary{background:var(--orange); color:#0a0a0c;}
+  .btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-1px);}
+  .btn-ghost{color:var(--text); border:1px solid var(--line);}
+  .btn-ghost:hover,.btn-ghost:focus-visible{border-color:#3a3a40;}
+  .btn:focus-visible{outline:2px solid var(--orange); outline-offset:2px;}
+
+  .links{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:8px 22px;
+    font-size:13.5px;
+  }
+  .links a{
+    text-decoration:none;
+    color:var(--muted);
+    border-bottom:1px solid transparent;
+    padding-bottom:2px;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .links a:hover,.links a:focus-visible{color:var(--text); border-color:var(--orange);}
+
+  /* Timeline strip */
+  .timeline{
+    margin-top:54px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+  }
+  .timeline-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:0.06em;
+    margin-bottom:12px;
+    text-align:center;
+  }
+  .clips{
+    display:flex;
+    gap:3px;
+    overflow:hidden;
+    width:100%;
+  }
+  .clip{
+    flex:1 1 0;
+    min-width:0;
+    height:34px;
+    border-radius:3px;
+    background:linear-gradient(135deg, rgba(47,214,194,0.5), rgba(47,214,194,0.15));
+  }
+  .clip:nth-child(3n){background:linear-gradient(135deg, rgba(255,122,61,0.5), rgba(255,122,61,0.15));}
+  .clip.missing{
+    background:repeating-linear-gradient(135deg, rgba(255,59,87,0.35) 0 6px, rgba(0,0,0,0.4) 6px 12px);
+    border:1px solid var(--rec);
+    position:relative;
+  }
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:20px clamp(20px,5vw,64px);
+  }
+  .foot-wrap{
+    max-width:1040px;
+    margin:0 auto;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 26px;
+    justify-content:space-between;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .foot-wrap a{text-decoration:none;color:var(--muted);}
+  .foot-wrap a:hover,.foot-wrap a:focus-visible{color:var(--text);}
+  .foot-left{display:flex;flex-wrap:wrap;gap:6px 22px;}
+
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.25;}}
+  @keyframes drift{0%{transform:translateY(0);}100%{transform:translateY(60px);}}
+
+  @media (max-width:900px){
+    main{padding:32px 20px 48px;}
+    .monitor{padding:10px;}
+    .bracket{width:16px;height:16px;}
+    .clip{height:28px;}
+  }
+
+  @media (max-width:640px){
+    .copy{margin-top:32px;}
+    .ctas{flex-direction:column; align-items:stretch;}
+    .btn{justify-content:center;}
+    .links{gap:8px 16px; font-size:13px;}
+    .timeline{margin-top:38px;}
+    .clip{height:22px;}
+    .no-footage{font-size:10.5px;}
+    .foot-wrap{flex-direction:column;}
+    .topbar nav a{margin-left:16px; font-size:12.5px;}
+  }
+
+  @media (max-width:380px){
+    .hud-row span:last-child{max-width:44vw; overflow:hidden; text-overflow:ellipsis;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .rec .dot,.scan{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="wordmark" href="https://hashlight.me/">Hashlight<span>.</span></a>
+    <nav>
+      <a href="https://hashlight.me/#about">About</a>
+      <a href="https://hashlight.me/#contact">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <div class="stack">
+
+      <div class="monitor">
+        <div class="screen" id="screen">
+          <div class="stripes"></div>
+          <div class="scan"></div>
+          <div class="safe"></div>
+
+          <div class="hud-row top">
+            <div class="rec"><span class="dot"></span> REC <span id="clock">00:00:14</span></div>
+            <div class="meters">
+              <span class="meter-label">CH1</span>
+              <div class="meter" id="m1"><i style="height:4px"></i><i style="height:8px"></i><i style="height:6px"></i><i style="height:10px"></i></div>
+              <span class="meter-label">CH2</span>
+              <div class="meter" id="m2"><i style="height:6px"></i><i style="height:5px"></i><i style="height:9px"></i><i style="height:4px"></i></div>
+            </div>
+          </div>
+
+          <div class="center-copy">
+            <div class="offline-tag">PAGE OFFLINE</div>
+            <p class="code">404</p>
+            <div class="no-footage">no footage found at this timecode</div>
+          </div>
+
+          <div class="hud-row bottom">
+            <span>16:9 · 4K · 24FPS</span>
+            <span>REEL_404_NF.MOV</span>
+          </div>
+
+          <div class="vignette"></div>
+        </div>
+      </div>
+
+      <div class="copy">
+        <h1>This clip didn't survive the edit.</h1>
+        <p class="lede">The page you wanted got cut from the final timeline. It may have moved, been renamed, or never existed. Here's what's still live and ready to watch.</p>
+
+        <div class="ctas">
+          <a class="btn btn-primary" href="https://wa.me/918096177746?text=Hi%20Hashlight%2C%20I%20landed%20on%20a%20broken%20link%20and%20wanted%20to%20reach%20out.">Message us on WhatsApp</a>
+          <a class="btn btn-ghost" href="https://hashlight.me/">Back to home</a>
+        </div>
+
+        <div class="links">
+          <a href="https://hashlight.me/#social-media">Reels &amp; case studies</a>
+          <a href="https://hashlight.me/#about">Who runs Hashlight</a>
+          <a href="https://hashlight.me/#video-editors">The bench</a>
+          <a href="https://hashlight.me/#contact">Start a project</a>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-label">TIMELINE · V1</div>
+        <div class="clips" id="clips"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="foot-wrap">
+      <div class="foot-left">
+        <span>Hyderabad, India</span>
+        <span>Mon–Sat, 10:00 AM – 6:00 PM IST</span>
+        <a href="mailto:hello@hashlight.me">hello@hashlight.me</a>
+        <a href="https://www.instagram.com/hashlight.me/">@hashlight.me</a>
+      </div>
+      <span>6.8M+ organic views generated. The studio's still shooting.</span>
+    </div>
+  </footer>
+
+<script>
+  // Timecode, ticking up like a live recording
+  let secs = 14;
+  const clock = document.getElementById('clock');
+  setInterval(() => {
+    secs++;
+    const m = String(Math.floor(secs/60)).padStart(2,'0');
+    const s = String(secs%60).padStart(2,'0');
+    clock.textContent = '00:' + m + ':' + s;
+  }, 1000);
+
+  // Audio meter bounce
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduceMotion){
+    ['m1','m2'].forEach(id => {
+      const bars = document.querySelectorAll('#' + id + ' i');
+      setInterval(() => {
+        bars.forEach(b => { b.style.height = (3 + Math.random()*11).toFixed(0) + 'px'; });
+      }, 380);
+    });
+  }
+
+  // Build the clip strip, with one clip marked missing
+  const clips = document.getElementById('clips');
+  const total = 18;
+  const missingAt = 9;
+  for(let i=0;i<total;i++){
+    const el = document.createElement('div');
+    el.className = 'clip' + (i === missingAt ? ' missing' : '');
+    clips.appendChild(el);
+  }
+</script>
+
+</body>
+</html>
